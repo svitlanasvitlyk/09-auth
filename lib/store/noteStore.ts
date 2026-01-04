@@ -1,29 +1,38 @@
-import { NoteMin } from "@/types/note";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { CreateNotePayload } from "@/lib/api/clientApi";
 
-type NoteDraftStore = {
-  draft: NoteMin;
-  setDraft: (note: NoteMin) => void;
-  clearDraft: () => void;
-};
-
-const initialDraft: NoteMin = {
+interface Draft {
+  title: string;
+  content: string;
+  tag: CreateNotePayload["tag"];
+}
+const initialDraft: Draft = {
   title: "",
   content: "",
   tag: "Todo",
 };
 
-export const useNoteDraftStore = create<NoteDraftStore>()(
+interface NoteStore {
+  draft: Draft;
+  setDraft: (note: Partial<Draft>) => void;
+  clearDraft: () => void;
+}
+
+const useNoteStore = create<NoteStore>()(
   persist(
     (set) => ({
       draft: initialDraft,
-      setDraft: (note) => set(() => ({ draft: note })),
+      setDraft: (note) =>
+        set((state) => ({
+          draft: { ...state.draft, ...note },
+        })),
       clearDraft: () => set({ draft: initialDraft }),
     }),
     {
       name: "note-draft",
-      partialize: (state) => ({ draft: state.draft }),
     }
   )
 );
+
+export default useNoteStore;

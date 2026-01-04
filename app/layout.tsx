@@ -1,9 +1,10 @@
+import Footer from "@/components/Footer/Footer";
+import Header from "@/components/Header/Header";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header/Header";
-import Footer from "@/components/Footer/Footer";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import AuthProvider from "@/components/AuthProvider/AuthProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -13,42 +14,43 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Notehub",
-  description:
-    "A simple web application for creating, editing, and organizing notes.",
+  title: "NoteHub",
+  description: "Smart note organization with tagging and search",
   openGraph: {
-    title: "Notehub",
-    description:
-      "A simple web application for creating, editing, and organizing notes.",
-    url: "https://07-routing-nextjs-rust-nu.vercel.app/",
+    title: "NoteHub",
+    description: "Smart note organization with tagging and search",
+    url: "http://localhost:3000",
+    siteName: "NoteHub",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
         width: 1200,
         height: 630,
-        alt: "Notehub",
+        alt: "NoteHub - Smart note organization",
       },
     ],
+    type: "website",
   },
 };
 
 export default function RootLayout({
-  modal,
   children,
+  modal,
 }: Readonly<{
-  modal: React.ReactNode;
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <body className={roboto.variable}>
         <TanStackProvider>
-          <Header />
-          <main>
+          <AuthProvider>
+            <Header />
+            <main>{children}</main>
             {modal}
-            {children}
-          </main>
-          <Footer />
+            <Footer />
+            <div id="modal-root"></div>
+          </AuthProvider>
         </TanStackProvider>
       </body>
     </html>

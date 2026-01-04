@@ -4,7 +4,7 @@ import ReactPaginate from "react-paginate";
 interface PaginationProps {
   totalPages: number;
   currentPage: number;
-  onPageChange: (selected: number) => void;
+  onPageChange: (page: number) => void;
 }
 
 export default function Pagination({
@@ -12,19 +12,17 @@ export default function Pagination({
   currentPage,
   onPageChange,
 }: PaginationProps) {
+  if (totalPages <= 1) return null;
+
   return (
-    <>
-      <ReactPaginate
-        pageCount={totalPages}
-        pageRangeDisplayed={5}
-        marginPagesDisplayed={1}
-        onPageChange={({ selected }) => onPageChange(selected + 1)}
-        forcePage={currentPage - 1}
-        containerClassName={css.pagination}
-        activeClassName={css.active}
-        nextLabel="→"
-        previousLabel="←"
-      />
-    </>
+    <ReactPaginate
+      pageCount={totalPages}
+      forcePage={currentPage - 1}
+      onPageChange={(selected) => onPageChange(selected.selected + 1)}
+      containerClassName={css.pagination}
+      activeClassName={css.active}
+      previousLabel="<"
+      nextLabel=">"
+    />
   );
 }
