@@ -10,9 +10,11 @@ import Pagination from "@/components/Pagination/Pagination";
 import Loader from "@/components/Loader/Loader";
 import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
 import Link from "next/link";
+
 interface NotesClientProps {
   tag?: string;
 }
+
 
 export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
@@ -33,7 +35,13 @@ export default function NotesClient({ tag }: NotesClientProps) {
   return (
     <div>
       <header>
-        <SearchBox value={search} onChange={setSearch} />
+        <SearchBox
+          value={search}
+          onChange={(value) => {
+            setSearch(value);
+            setPage(1);
+          }}
+        />
         {data?.totalPages && data.totalPages > 1 && (
           <Pagination
             totalPages={data.totalPages}
