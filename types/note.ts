@@ -1,10 +1,14 @@
-export type Tag = "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
-
 export interface Note {
-  id: string;
-  title: string;
-  content: string;
-  tag: Tag;
-  createdAt: string;
-  updatedAt: string;
+    id: string,
+    title: string,
+    content: string,
+    createdAt: string,
+    updatedAt: string,
+    tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping",
+}
+
+export interface NoteMin {
+    title: string,
+    content: string,
+    tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping",
 }

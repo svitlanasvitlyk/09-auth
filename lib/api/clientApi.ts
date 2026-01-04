@@ -1,96 +1,82 @@
-import api from "./api";
-import { Note } from "@/types/note";
-import { User } from "@/types/user";
+import type { Note, NoteMin } from "@/types/note.ts";
+import { api } from "./api";
+import type { User } from "@/types/user";
 
-interface NotesResponse {
+export interface fullResp {
   notes: Note[];
   totalPages: number;
 }
 
-interface FetchNotesParams {
-  search?: string;
-  tag?: string;
-  page?: number;
-  perPage?: number;
-}
+export const fetchNotes = async (
+  title?: string,
+  page?: number,
+  category?: string | undefined
+) => {
+  const response = await api.get<fullResp>("/notes", {
+    params: {
+      search: title,
+      perPage: 12,
+      page,
+      tag: category,
+    },
+  });
+  return response.data;
+};
 
-export interface CreateNotePayload {
-  title: string;
-  content?: string;
-  tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
-}
+export const deleteNote = async (id: string): Promise<Note> => {
+  const deleteResp = await api.delete<Note>(`/notes/${id}`);
+  return deleteResp.data;
+};
 
-interface RegisterPayload {
+export const createNote = async (note: NoteMin): Promise<Note> => {
+  const createResp = await api.post<Note>("/notes", note);
+  return createResp.data;
+};
+
+export const fetchNoteById = async (id: string): Promise<Note> => {
+  const singleNote = await api.get<Note>(`/notes/${id}`);
+  return singleNote.data;
+};
+
+export interface authProps {
   email: string;
   password: string;
 }
 
-interface LoginPayload {
-  email: string;
-  password: string;
-}
+export const register = async (body: authProps) => {
+  const regResp = await api.post<User>("/auth/register", body);
+  return regResp.data;
+};
 
-interface UpdateUserPayload {
-  username?: string;
-}
+export const login = async (body: authProps) => {
+  const logResp = await api.post<User>("/auth/login", body);
+  return logResp.data;
+};
 
-export async function fetchNotes({
-  search,
-  tag,
-  page = 1,
-  perPage = 12,
-}: FetchNotesParams = {}): Promise<NotesResponse> {
-  const params = {
-    ...(search && { search }),
-    ...(tag && { tag }),
-    page,
-    perPage,
-  };
-
-  const response = await api.get<NotesResponse>("/notes", { params });
-  return response.data;
-}
-
-export async function fetchNoteById(noteId: string): Promise<Note> {
-  const response = await api.get<Note>(`/notes/${noteId}`);
-  return response.data;
-}
-
-export async function createNote(payload: CreateNotePayload): Promise<Note> {
-  const response = await api.post<Note>("/notes", payload);
-  return response.data;
-}
-
-export async function deleteNote(noteId: string): Promise<Note> {
-  const response = await api.delete<Note>(`/notes/${noteId}`);
-  return response.data;
-}
-
-export async function register(payload: RegisterPayload): Promise<User> {
-  const response = await api.post<User>("/auth/register", payload);
-  return response.data;
-}
-
-export async function login(payload: LoginPayload): Promise<User> {
-  const response = await api.post<User>("/auth/login", payload);
-  return response.data;
-}
-
-export async function logout(): Promise<void> {
+export const logout = async (): Promise<void> => {
   await api.post("/auth/logout");
+};
+
+export const getMe = async () => {
+  const { data } = await api.get<User>("/users/me");
+  return data;
+};
+
+type CheckSessionRequest = {
+  success: boolean;
+};
+
+export const checkSession = async () => {
+  const res = await api.get<CheckSessionRequest>("/auth/session");
+  return res.data.success;
+};
+
+interface editProps {
+  email: string;
+  username: string;
 }
 
-export async function checkSession() {
-  const response = await api.get<{ success: boolean }>("/auth/session");
-  return response;
-}
-
-export async function getMe(): Promise<User> {
-  const response = await api.get<User>("/users/me");
-  return response.data;
-}
-
-export async function updateMe(payload: UpdateUserPayload): Promise<User> {
-  const response = await api.patch<User>("/users/me", payload);
-  return response.data;
-}
+export const updateMe = async (body: editProps) => {
+  const updResp = await api.patch<User>("/users/me", body);
+  return updResp.data;
+};
