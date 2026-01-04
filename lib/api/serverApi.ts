@@ -1,7 +1,12 @@
-import axios, { AxiosResponse } from "axios";
+import { api } from "@/app/api/api";
 import { cookies } from "next/headers";
 import { Note } from "@/types/note";
 import { User } from "@/types/user";
+/*
+
+import { fullResp } from "./clientApi";
+
+*/
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL + '/api';
 
@@ -38,7 +43,7 @@ export async function fetchNotes({
 
   const cookieHeader = await getCookiesHeader();
 
-  const response = await axios.get<NotesResponse>(`${baseURL}/notes`, {
+  const response = await api.get<NotesResponse>(`${baseURL}/notes`, {
     params,
     headers: {
       Cookie: cookieHeader,
@@ -50,7 +55,7 @@ export async function fetchNotes({
 export async function fetchNoteById(noteId: string): Promise<Note> {
   const cookieHeader = await getCookiesHeader();
 
-  const response = await axios.get<Note>(`${baseURL}/notes/${noteId}`, {
+  const response = await api.get<Note>(`${baseURL}/notes/${noteId}`, {
     headers: {
       Cookie: cookieHeader,
     },
@@ -61,7 +66,7 @@ export async function fetchNoteById(noteId: string): Promise<Note> {
 export async function getMe(): Promise<User> {
   const cookieHeader = await getCookiesHeader();
 
-  const response = await axios.get<User>(`${baseURL}/users/me`, {
+  const response = await api.get<User>(`${baseURL}/users/me`, {
     headers: {
       Cookie: cookieHeader,
     },
@@ -72,7 +77,7 @@ export async function getMe(): Promise<User> {
 export async function checkSession(): Promise<AxiosResponse> {
   const cookieHeader = await getCookiesHeader();
 
-  const response = await axios.get(`${baseURL}/auth/session`, {
+  const response = await api.get(`${baseURL}/auth/session`, {
     headers: {
       Cookie: cookieHeader,
     },
